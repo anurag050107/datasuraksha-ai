@@ -24,7 +24,7 @@
     </div>
     <div class="flex items-center gap-2 bg-slate-800/80 px-4 py-2 rounded-full border border-slate-700 text-xs text-slate-300">
         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        Backend: <span class="font-mono text-cyan-300">localhost:3000</span>
+        Backend: <span class="font-mono text-cyan-300">Live Production</span>
     </div>
 </header>
 
@@ -76,7 +76,6 @@
                 </button>
             </div>
             
-            <!-- NEW: Grid of Input Boxes -->
             <div class="space-y-3 mb-4" id="manualInputForm">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -190,7 +189,6 @@
 
 <script>
 async function runScan() {
-    // Gather data from the new individual input boxes
     const combinedPayload = `
         Aadhaar: ${document.getElementById('inputAadhaar').value}
         PAN: ${document.getElementById('inputPan').value}
@@ -202,7 +200,8 @@ async function runScan() {
     if (combinedPayload.trim().length < 50) return alert('Please enter data into at least one field to scan.');
 
     try {
-        const response = await fetch('http://localhost:3000/api/v1/scan', {
+        // PRODUCTION FIX: Relative URL routing
+        const response = await fetch('/api/v1/scan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: 'USER_123', rawPayload: combinedPayload })
@@ -212,7 +211,7 @@ async function runScan() {
             displayScanResults(data.scam_index);
         }
     } catch (err) {
-        alert('Could not connect to backend server at http://localhost:3000. Ensure server.js is running.');
+        alert('Could not connect to backend server. Ensure server is running.');
     }
 }
 
@@ -266,7 +265,8 @@ async function generateNotice(e) {
     };
     
     try {
-        const response = await fetch('http://localhost:3000/api/v1/dpdp/generate-notice', {
+        // PRODUCTION FIX: Relative URL routing
+        const response = await fetch('/api/v1/dpdp/generate-notice', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
@@ -290,14 +290,12 @@ function copyNotice() {
 }
 
 function seedSampleData() {
-    // Fill the new individual input boxes on the left
     document.getElementById('inputAadhaar').value = '[Aadhaar Redacted]';
     document.getElementById('inputPan').value = 'BCPRS8192K';
     document.getElementById('inputUpi').value = 'rajesh.sharma@upi';
     document.getElementById('inputPhone').value = '+91 9876543210';
     document.getElementById('inputEmail').value = 'rajesh.sharma@example.com';
     
-    // Auto-fill DPDP form fields on the right
     document.getElementById('userName').value = 'Rajesh Sharma';
     document.getElementById('userEmail').value = 'rajesh.sharma@example.com';
     document.getElementById('companyName').value = 'FinData Logistics Pvt Ltd'; 
