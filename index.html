@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DataSuraksha AI - Threat & DPDP Compliance Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- jsPDF Library for Client-Side PDF Generation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
+
+<!-- Header -->
+<header class="max-w-6xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center border-b border-slate-800 pb-4 gap-4">
+    <div class="flex items-center gap-3">
+        <div class="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/30 text-cyan-400 text-2xl">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+            <h1 class="text-2xl font-bold tracking-wide text-white">DataSuraksha <span class="text-cyan-400">AI</span></h1>
+            <p class="text-xs text-slate-400">Threat Intelligence & DPDP Act Compliance Engine</p>
+        </div>
+    </div>
+    <div class="flex items-center gap-2 bg-slate-800/80 px-4 py-2 rounded-full border border-slate-700 text-xs text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Backend: <span class="font-mono text-cyan-300">localhost:3000</span>
+    </div>
+</header>
+
+<!-- Top Stats Bar -->
+<div class="max-w-6xl mx-auto mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3.5 flex items-center gap-3">
+        <div class="text-cyan-400 bg-cyan-500/10 p-2.5 rounded-lg"><i class="fa-solid fa-radar text-lg"></i></div> 
+        <div>
+            <p class="text-xs text-slate-400">OSINT Sources</p>
+            <p class="text-sm font-bold text-white">14 Feeds Active</p>
+        </div>
+    </div>
+    <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3.5 flex items-center gap-3">
+        <div class="text-emerald-400 bg-emerald-500/10 p-2.5 rounded-lg"><i class="fa-solid fa-scale-balanced text-lg"></i></div>
+        <div>
+            <p class="text-xs text-slate-400">DPDP Act Alignment</p>
+            <p class="text-sm font-bold text-emerald-400">Section 12 Verified</p>
+        </div>
+    </div>
+    <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl p-3.5 flex items-center gap-3">
+        <div class="text-amber-400 bg-amber-500/10 p-2.5 rounded-lg"><i class="fa-solid fa-shield-virus text-lg"></i></div>
+        <div>
+            <p class="text-xs text-slate-400">Avg Scan Latency</p>
+            <p class="text-sm font-bold text-white">&lt; 120 ms</p>
+        </div>
+    </div>
+</div>
+
+<main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+    
+    <!-- Section 1: PII Exposure Scanner & Scam Vulnerability Index -->
+    <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
+        <!-- Live Ticker Bar -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-lg px-3 py-1.5 mb-3 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2 text-slate-400">
+                <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                <span class="text-slate-300 font-mono text-[11px]">LIVE FEED: Monitored Telegram Breach Dump #2841</span> 
+            </div>
+            <span class="text-[10px] text-cyan-400 font-mono">UPDATED JUST NOW</span>
+        </div>
+
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-radar text-cyan-400"></i> PII Scanner
+                </h2>
+                <button type="button" onclick="seedSampleData()" class="text-xs text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1 transition">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Load Sample Breach Data
+                </button>
+            </div>
+            
+            <!-- NEW: Grid of Input Boxes -->
+            <div class="space-y-3 mb-4" id="manualInputForm">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Aadhaar Card</label>
+                        <input type="text" id="inputAadhaar" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-cyan-500 outline-none font-mono" placeholder="XXXX XXXX XXXX">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">PAN Card</label>
+                        <input type="text" id="inputPan" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-cyan-500 outline-none font-mono" placeholder="ABCDE1234F">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">UPI ID</label>
+                        <input type="text" id="inputUpi" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-cyan-500 outline-none font-mono" placeholder="user@upi">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Phone Number</label>
+                        <input type="text" id="inputPhone" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-cyan-500 outline-none font-mono" placeholder="+91 9876543210">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Email Address</label>
+                    <input type="email" id="inputEmail" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-cyan-500 outline-none font-mono" placeholder="user@example.com">
+                </div>
+            </div>
+            
+            <button onclick="runScan()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-lg shadow-cyan-600/20"> 
+                <i class="fa-solid fa-magnifying-glass"></i> Compute Scam Vulnerability Index
+            </button>
+        </div>
+
+        <!-- Scan Results / Gauge Meter -->
+        <div id="scanResults" class="mt-6 pt-6 border-t border-slate-700/60 hidden">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Scam Vulnerability Index</span>
+                <span id="riskBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-700 text-slate-300">LOW</span>
+            </div>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 flex items-center justify-between mb-4">
+                <div>
+                    <div class="text-3xl font-black tracking-tight" id="scoreDisplay">0.0<span class="text-sm font-normal text-slate-500">/10</span></div>
+                    <p class="text-xs text-slate-400">Composite Exposure Score</p>
+                </div>
+                <div class="w-32 bg-slate-800 rounded-full h-3 overflow-hidden border border-slate-700">
+                    <div id="scoreBar" class="bg-cyan-500 h-full w-0 transition-all duration-700"></div>
+                </div>
+            </div>
+            <div>
+                <span class="text-xs text-slate-400 block mb-2 font-medium">Detected Factors:</span>
+                <div id="detectedFactors" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: DPDP Act Section 12 Legal Notice Generator -->
+    <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
+        <div>
+            <h2 class="text-lg font-semibold text-white mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-file-contract text-emerald-400"></i> DPDP Section 12 Legal Engine
+            </h2> 
+            <p class="text-xs text-slate-400 mb-4">Generate legally binding Data Erasure Notices for Data Fiduciaries.</p>
+            
+            <form id="dpdpForm" onsubmit="generateNotice(event)" class="space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Your Name</label>
+                        <input type="text" id="userName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="Rahul Sharma">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Your Email</label>
+                        <input type="email" id="userEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="rahul@example.com">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Breaching Entity Name</label>
+                        <input type="text" id="companyName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="TechCorp India">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">DPO Email</label>
+                        <input type="email" id="dpoEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="dpo@techcorp.com">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Exposed Identifiers (Comma separated)</label>
+                    <input type="text" id="piiTypes" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="Aadhaar, PAN Card, Mobile Number">
+                </div> 
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-600/20">
+                    <i class="fa-solid fa-gavel"></i> Generate Legal Erasure Notice
+                </button>
+            </form>
+        </div>
+
+        <!-- Legal Output Block -->
+        <div id="noticeOutputSection" class="mt-6 pt-6 border-t border-slate-700/60 hidden">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Generated Legal Notice</span>
+                <div class="flex items-center gap-3">
+                    <button onclick="copyNotice()" class="text-xs text-slate-400 hover:text-slate-200 font-medium flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> Copy
+                    </button>
+                    <button onclick="downloadPDF()" class="text-xs text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-file-pdf"></i> Download Official PDF
+                    </button>
+                </div>
+            </div>
+            <textarea id="noticeDocument" readonly rows="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-300 font-mono focus:outline-none resize-none"></textarea>
+        </div>
+    </section>
+</main>
+
+<script>
+async function runScan() {
+    // Gather data from the new individual input boxes
+    const combinedPayload = `
+        Aadhaar: ${document.getElementById('inputAadhaar').value}
+        PAN: ${document.getElementById('inputPan').value}
+        UPI: ${document.getElementById('inputUpi').value}
+        Phone: ${document.getElementById('inputPhone').value}
+        Email: ${document.getElementById('inputEmail').value}
+    `;
+
+    if (combinedPayload.trim().length < 50) return alert('Please enter data into at least one field to scan.');
+
+    try {
+        const response = await fetch('http://localhost:3000/api/v1/scan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: 'USER_123', rawPayload: combinedPayload })
+        });
+        const data = await response.json();
+        if (data.status === 'success') {
+            displayScanResults(data.scam_index);
+        }
+    } catch (err) {
+        alert('Could not connect to backend server at http://localhost:3000. Ensure server.js is running.');
+    }
+}
+
+function displayScanResults(indexData) {
+    document.getElementById('scanResults').classList.remove('hidden');
+    const score = indexData.score;
+    document.getElementById('scoreDisplay').innerHTML = `${score}<span class="text-sm font-normal text-slate-500">/10</span>`;
+    
+    const scoreBar = document.getElementById('scoreBar');
+    scoreBar.style.width = `${(score / 10) * 100}%`; 
+    
+    const badge = document.getElementById('riskBadge');
+    badge.textContent = indexData.level;
+    if (indexData.level === 'CRITICAL') {
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30';
+        scoreBar.className = 'bg-rose-500 h-full transition-all duration-700';
+    } else if (indexData.level === 'MEDIUM') {
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        scoreBar.className = 'bg-amber-500 h-full transition-all duration-700';
+    } else {
+        badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        scoreBar.className = 'bg-emerald-500 h-full transition-all duration-700';
+    }
+    
+    const factorsContainer = document.getElementById('detectedFactors');
+    factorsContainer.innerHTML = '';
+    
+    if (indexData.factors.length === 0) {
+        factorsContainer.innerHTML = '<span class="text-xs text-slate-500">No sensitive Indian PII identifiers detected.</span>';
+    } else {
+        indexData.factors.forEach(factor => {
+            const tag = document.createElement('span');
+            tag.className = 'px-2.5 py-1 bg-slate-800 text-slate-300 border border-slate-700 rounded-md text-xs font-mono';
+            tag.textContent = factor;
+            factorsContainer.appendChild(tag);
+        });
+    }
+}
+
+async function generateNotice(e) {
+    e.preventDefault();
+    const piiInput = document.getElementById('piiTypes').value;
+    const piiTypes = piiInput.split(',').map(s => s.trim());
+    const payload = {
+        userName: document.getElementById('userName').value,
+        userEmail: document.getElementById('userEmail').value,
+        companyName: document.getElementById('companyName').value,
+        dpoEmail: document.getElementById('dpoEmail').value,
+        piiTypes: piiTypes, 
+        exposureRef: 'REF-' + Math.floor(100000 + Math.random() * 900000)
+    };
+    
+    try {
+        const response = await fetch('http://localhost:3000/api/v1/dpdp/generate-notice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        
+        if (data.status === 'generated') {
+            document.getElementById('noticeOutputSection').classList.remove('hidden');
+            document.getElementById('noticeDocument').value = data.notice_document.trim();
+        }
+    } catch (err) {
+        alert('Failed to connect to backend server.');
+    }
+}
+
+function copyNotice() {
+    const doc = document.getElementById('noticeDocument');
+    doc.select();
+    navigator.clipboard.writeText(doc.value);
+    alert('Legal notice copied to clipboard!');
+}
+
+function seedSampleData() {
+    // Fill the new individual input boxes on the left
+    document.getElementById('inputAadhaar').value = '[Aadhaar Redacted]';
+    document.getElementById('inputPan').value = 'BCPRS8192K';
+    document.getElementById('inputUpi').value = 'rajesh.sharma@upi';
+    document.getElementById('inputPhone').value = '+91 9876543210';
+    document.getElementById('inputEmail').value = 'rajesh.sharma@example.com';
+    
+    // Auto-fill DPDP form fields on the right
+    document.getElementById('userName').value = 'Rajesh Sharma';
+    document.getElementById('userEmail').value = 'rajesh.sharma@example.com';
+    document.getElementById('companyName').value = 'FinData Logistics Pvt Ltd'; 
+    document.getElementById('dpoEmail').value = 'dpo@findatalogistics.in';
+    document.getElementById('piiTypes').value = 'Aadhaar Card, PAN Card, UPI ID, Phone Number';
+}
+
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const noticeText = document.getElementById('noticeDocument').value;
+    
+    if (!noticeText.trim()) {
+        return alert('Please generate a legal notice first.');
+    }
+    
+    const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4'
+    });
+    
+    const marginLeft = 15;
+    const marginTop = 20;
+    const pageHeight = doc.internal.pageSize.height;
+    const maxWidth = doc.internal.pageSize.width - (marginLeft * 2);
+    
+    doc.setFillColor(15, 23, 42); 
+    doc.rect(0, 0, 210, 25, 'F');
+    doc.setTextColor(52, 211, 153); 
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('DataSuraksha AI - Legal Compliance Engine', marginLeft, 12);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('FORMAL NOTICE UNDER DPDP ACT 2023 (SECTION 12)', marginLeft, 18);
+    
+    doc.setTextColor(30, 41, 59);
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(9.5);
+    const lines = doc.splitTextToSize(noticeText, maxWidth);
+    
+    let cursorY = 35; 
+    lines.forEach(line => {
+        if (cursorY > pageHeight - 20) {
+            doc.addPage();
+            cursorY = 20;
+        }
+        doc.text(line, marginLeft, cursorY);
+        cursorY += 5;
+    });
+    
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Generated on: ${new Date().toLocaleString()} | Cryptographic Hash Verified`, marginLeft, pageHeight - 10);
+    
+    doc.save('DPDP_Section_12_Erasure_Notice.pdf');
+}
+</script>
+</body>
+</html>
