@@ -8,7 +8,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Serve index.html static file
+// Explicitly serve the frontend so Render's health check passes instantly
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve any other static assets
 app.use(express.static(__dirname));
 
 // 1. Indian PII Regex Parser
