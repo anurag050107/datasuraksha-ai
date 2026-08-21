@@ -11,6 +11,12 @@
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
 
+    <!-- Language Switcher -->
+    <select id="langSwitcher" onchange="changeLanguage(this.value)" class="absolute top-4 right-4 bg-slate-800 text-white border border-slate-600 rounded p-1 z-50 shadow-sm">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+    </select>
+    
 <!-- Header -->
 <header class="max-w-6xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center border-b border-slate-800 pb-4 gap-4">
     <div class="flex items-center gap-3">
@@ -18,8 +24,8 @@
             <i class="fa-solid fa-shield-halved"></i>
         </div>
         <div>
-            <h1 class="text-2xl font-bold tracking-wide text-white">DataSuraksha <span class="text-cyan-400">AI</span></h1>
-            <p class="text-xs text-slate-400">Threat Intelligence & DPDP Act Compliance Engine</p>
+            <h1 class="text-2xl font-bold tracking-wide text-white"><span data-i18n="title">DataSuraksha</span> <span class="text-cyan-400">AI</span></h1>
+            <p class="text-xs text-slate-400" data-i18n="subtitle">Threat Intelligence & DPDP Act Compliance Engine</p>
         </div>
     </div>
     <div class="flex items-center gap-2 bg-slate-800/80 px-4 py-2 rounded-full border border-slate-700 text-xs text-slate-300">
@@ -354,6 +360,24 @@ function downloadPDF() {
     doc.text(`Generated on: ${new Date().toLocaleString()} | Cryptographic Hash Verified`, marginLeft, pageHeight - 10);
     
     doc.save('DPDP_Section_12_Erasure_Notice.pdf');
+}
+</script>
+<!-- Multi-Language Translation Engine -->
+<script>
+async function changeLanguage(lang) {
+    try {
+        const response = await fetch(`/locales/${lang}.json`);
+        const translations = await response.json();
+
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            if (translations[key]) {
+                element.innerText = translations[key];
+            }
+        });
+    } catch (error) {
+        console.error("Language load failed:", error);
+    }
 }
 </script>
 </body>
