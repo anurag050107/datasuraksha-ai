@@ -9,34 +9,9 @@
 <!-- jsPDF Library for Client-Side PDF Generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    /* 1. Nuke the white gap at the top of the page */
-    html, body { 
-        top: 0px !important; 
-        margin-top: 0px !important; 
-        padding-top: 0px !important;
-        position: static !important;
-    }
-    
-    /* 2. Hide the Google Banner completely */
-    .skiptranslate iframe, .goog-te-banner-frame { 
-        display: none !important; 
-    }
-    
-    /* 3. Hide the Google Logo & text */
-    .goog-logo-link { display: none !important; }
-    .goog-te-gadget { color: transparent !important; margin: 0 !important; padding: 0 !important; font-size: 0 !important; }
-    
-    /* 4. Force the Dropdown to match Tailwind Slate */
-    .goog-te-combo {
-        background-color: #1e293b !important; 
-        color: #f8fafc !important; 
-        border: 1px solid #475569 !important; 
-        padding: 6px !important;
-        border-radius: 6px !important;
-        font-family: ui-sans-serif, system-ui, sans-serif !important;
-        font-size: 14px !important;
-        outline: none !important;
-    }
+    body { top: 0px !important; position: static !important; }
+    .goog-te-banner-frame { display: none !important; }
+    iframe.skiptranslate { display: none !important; }
 </style>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
@@ -403,14 +378,18 @@ function googleTranslateElementInit() {
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script>
-    // Aggressively force the white bar to stay hidden every 500ms
+    // Run every 50 milliseconds to overpower Google
     setInterval(function() {
-        document.body.style.top = '0px';
-        document.body.style.position = 'static';
-        document.documentElement.style.top = '0px';
-        let iframes = document.querySelectorAll('.skiptranslate iframe, .goog-te-banner-frame');
-        iframes.forEach(iframe => iframe.style.display = 'none');
-    }, 500);
+        document.body.style.setProperty('top', '0px', 'important');
+        document.body.style.setProperty('position', 'static', 'important');
+        document.documentElement.style.setProperty('top', '0px', 'important');
+        
+        let banner = document.querySelector('.goog-te-banner-frame');
+        if (banner) { banner.style.setProperty('display', 'none', 'important'); }
+        
+        let frames = document.querySelectorAll('iframe.skiptranslate');
+        frames.forEach(frame => frame.style.setProperty('display', 'none', 'important'));
+    }, 50);
 </script>
 
 </body>
