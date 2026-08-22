@@ -8,6 +8,27 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- jsPDF Library for Client-Side PDF Generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    /* 1. Hide the annoying Google top banner */
+    .goog-te-banner-frame.skiptranslate { display: none !important; }
+    body { top: 0px !important; }
+    
+    /* 2. Hide the "Powered by Google" logo and text */
+    .goog-logo-link { display: none !important; }
+    .goog-te-gadget { color: transparent !important; margin: 0 !important; font-size: 0 !important; }
+    
+    /* 3. Force the dropdown to match your Tailwind Slate dark theme */
+    .goog-te-combo {
+        background-color: #1e293b !important; /* slate-800 */
+        color: #f8fafc !important; /* text-white */
+        border: 1px solid #475569 !important; /* border-slate-600 */
+        padding: 4px !important;
+        border-radius: 4px !important;
+        font-family: ui-sans-serif, system-ui, sans-serif !important;
+        font-size: 14px !important;
+        outline: none !important;
+    }
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
     
