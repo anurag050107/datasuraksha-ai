@@ -10,12 +10,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
-
-    <!-- Language Switcher -->
-    <select id="langSwitcher" onchange="changeLanguage(this.value)" class="absolute top-4 right-4 bg-slate-800 text-white border border-slate-600 rounded p-1 z-50 shadow-sm">
-        <option value="en">English</option>
-        <option value="hi">हिंदी</option>
-    </select>
     
 <!-- Header -->
 <header class="max-w-6xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center border-b border-slate-800 pb-4 gap-4">
@@ -362,23 +356,19 @@ function downloadPDF() {
     doc.save('DPDP_Section_12_Erasure_Notice.pdf');
 }
 </script>
-<!-- Multi-Language Translation Engine -->
-<script>
-async function changeLanguage(lang) {
-    try {
-        const response = await fetch(`/locales/${lang}.json`);
-        const translations = await response.json();
+<!-- Instant Multi-Language Widget -->
+<div id="google_translate_element" class="absolute top-4 right-4 z-50 border border-slate-600 rounded shadow-sm bg-slate-800 overflow-hidden"></div>
 
-        document.querySelectorAll('[data-i18n]').forEach(element => {
-            const key = element.getAttribute('data-i18n');
-            if (translations[key]) {
-                element.innerText = translations[key];
-            }
-        });
-    } catch (error) {
-        console.error("Language load failed:", error);
-    }
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en', 
+    includedLanguages: 'hi,bn,ta,te,mr,en',
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+  }, 'google_translate_element');
 }
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </script>
 </body>
 </html>
