@@ -9,21 +9,30 @@
 <!-- jsPDF Library for Client-Side PDF Generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    /* 1. Hide the annoying Google top banner */
-    .goog-te-banner-frame.skiptranslate { display: none !important; }
-    body { top: 0px !important; }
+    /* 1. Nuke the white gap at the top of the page */
+    html, body { 
+        top: 0px !important; 
+        margin-top: 0px !important; 
+        padding-top: 0px !important;
+        position: static !important;
+    }
     
-    /* 2. Hide the "Powered by Google" logo and text */
+    /* 2. Hide the Google Banner completely */
+    .skiptranslate iframe, .goog-te-banner-frame { 
+        display: none !important; 
+    }
+    
+    /* 3. Hide the Google Logo & text */
     .goog-logo-link { display: none !important; }
-    .goog-te-gadget { color: transparent !important; margin: 0 !important; font-size: 0 !important; }
+    .goog-te-gadget { color: transparent !important; margin: 0 !important; padding: 0 !important; font-size: 0 !important; }
     
-    /* 3. Force the dropdown to match your Tailwind Slate dark theme */
+    /* 4. Force the Dropdown to match Tailwind Slate */
     .goog-te-combo {
-        background-color: #1e293b !important; /* slate-800 */
-        color: #f8fafc !important; /* text-white */
-        border: 1px solid #475569 !important; /* border-slate-600 */
-        padding: 4px !important;
-        border-radius: 4px !important;
+        background-color: #1e293b !important; 
+        color: #f8fafc !important; 
+        border: 1px solid #475569 !important; 
+        padding: 6px !important;
+        border-radius: 6px !important;
         font-family: ui-sans-serif, system-ui, sans-serif !important;
         font-size: 14px !important;
         outline: none !important;
