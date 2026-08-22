@@ -8,22 +8,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- jsPDF Library for Client-Side PDF Generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-    body { top: 0px !important; position: static !important; }
-    .goog-te-banner-frame { display: none !important; }
-    iframe.skiptranslate { display: none !important; }
-    
-    /* Make the button dark mode */
-    .goog-te-combo { 
-        background-color: #0f172a !important; 
-        color: white !important; 
-        border: 1px solid #334155 !important; 
-        border-radius: 6px !important; 
-        padding: 4px !important; 
-        outline: none !important; 
-    }
-    .goog-te-gadget { color: transparent !important; background-color: transparent !important; }
-</style>
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
     
@@ -374,35 +358,32 @@ function downloadPDF() {
 </script>
 <!-- Instant Multi-Language Widget -->
 <div id="google_translate_element" class="absolute top-4 right-4 z-50 border border-slate-600 rounded shadow-sm bg-slate-800 overflow-hidden"></div>
-
+<!-- The Scripts -->
 <script type="text/javascript">
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement({
-    pageLanguage: 'en', 
-    includedLanguages: 'hi,bn,ta,te,mr,en',
-    layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-  }, 'google_translate_element');
-}
-</script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'hi,bn,ta,te,mr,en',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+        }, 'google_translate_element');
+    }
 </script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+<!-- The JavaScript Enforcer -->
 <script>
-    // Run every 50 milliseconds to overpower Google
     setInterval(function() {
         document.body.style.setProperty('top', '0px', 'important');
-        document.body.style.setProperty('position', 'static', 'important');
         document.documentElement.style.setProperty('top', '0px', 'important');
-        
         let banner = document.querySelector('.goog-te-banner-frame');
         if (banner) { banner.style.setProperty('display', 'none', 'important'); }
-        
         let frames = document.querySelectorAll('iframe.skiptranslate');
         frames.forEach(frame => frame.style.setProperty('display', 'none', 'important'));
     }, 50);
 </script>
 
+</body>
+</html>
 </body>
 </html>
 </body>
