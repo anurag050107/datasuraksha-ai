@@ -118,9 +118,20 @@ app.post('/api/v1/scan', async (req, res) => {
             console.log(`[OSINT Engine] Searching dark web for: ${targetEmail}`);
             await new Promise(resolve => setTimeout(resolve, 1200)); 
             
+            // 🔴 UPDATED: Enriched data array with Entity Names and DPO Emails for autofill
             externalBreaches = [
-                { source: "Telegram Dump #2841", date: "2026-08-10" },
-                { source: "TechCorp Database Leak", date: "2024-03-15" }
+                { 
+                    entity_name: "Telegram (Unknown Threat Actor)", 
+                    breach_date: "2026-08-10",
+                    exposed_fields: ["Email", "Phone"],
+                    dpo_email: "abuse@telegram.org" 
+                },
+                { 
+                    entity_name: "TechCorp India", 
+                    breach_date: "2024-03-15",
+                    exposed_fields: ["Email", "PAN", "Phone"],
+                    dpo_email: "dpo@techcorp.com" 
+                }
             ];
             
         } catch (error) {
@@ -137,7 +148,7 @@ app.post('/api/v1/scan', async (req, res) => {
         user_id: userId,
         exposures_found: exposures,
         internet_breaches_found: externalBreaches.length,
-        breach_details: externalBreaches,
+        breaches: externalBreaches, // 🔴 UPDATED: Key changed to 'breaches'
         scam_index: scamIndex
     });
 });

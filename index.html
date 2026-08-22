@@ -56,7 +56,7 @@
 <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
     
     <!-- Section 1: PII Exposure Scanner & Scam Vulnerability Index -->
-    <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
+    <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-start">
         <!-- Live Ticker Bar -->
         <div class="bg-slate-900/90 border border-slate-800 rounded-lg px-3 py-1.5 mb-3 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 text-slate-400">
@@ -128,10 +128,27 @@
                 <div id="detectedFactors" class="flex flex-wrap gap-2"></div>
             </div>
         </div>
+
+        <!-- ======================================================= -->
+        <!-- VERSION 2.0: IDENTIFIED BREACH SOURCES MAPPER           -->
+        <!-- ======================================================= -->
+        <div id="breach-sources-container" class="mt-6 pt-6 border-t border-slate-700/60 hidden">
+            <div class="flex items-center justify-between pb-3">
+                <h3 class="text-sm font-semibold text-rose-400 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Compromised Sources (<span id="breach-count">0</span>)
+                </h3>
+                <span class="text-[10px] text-slate-400 uppercase tracking-wider">Actionable Entities</span>
+            </div>
+            
+            <!-- Dynamic List Rendered via JavaScript -->
+            <div id="breach-list" class="mt-2 space-y-3"></div>
+        </div>
+        
     </section>
 
     <!-- Section 2: DPDP Act Section 12 Legal Notice Generator -->
-    <section class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
+    <!-- Added ID here for smooth scrolling -->
+    <section id="legal-engine-section" class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 backdrop-blur-sm flex flex-col justify-between">
         <div>
             <h2 class="text-lg font-semibold text-white mb-1 flex items-center gap-2">
                 <i class="fa-solid fa-file-contract text-emerald-400"></i> DPDP Section 12 Legal Engine
@@ -142,26 +159,26 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Your Name</label>
-                        <input type="text" id="userName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="Rahul Sharma">
+                        <input type="text" id="userName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none transition-all" placeholder="Rahul Sharma">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Your Email</label>
-                        <input type="email" id="userEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="rahul@example.com">
+                        <input type="email" id="userEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none transition-all" placeholder="rahul@example.com">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Breaching Entity Name</label>
-                        <input type="text" id="companyName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="TechCorp India">
+                        <input type="text" id="companyName" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none transition-all duration-300" placeholder="TechCorp India">
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">DPO Email</label>
-                        <input type="email" id="dpoEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="dpo@techcorp.com">
+                        <input type="email" id="dpoEmail" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none transition-all duration-300" placeholder="dpo@techcorp.com">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs text-slate-400 mb-1">Exposed Identifiers (Comma separated)</label>
-                    <input type="text" id="piiTypes" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none" placeholder="Aadhaar, PAN Card, Mobile Number">
+                    <input type="text" id="piiTypes" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-emerald-500 outline-none transition-all" placeholder="Aadhaar, PAN Card, Mobile Number">
                 </div> 
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-lg shadow-emerald-600/20">
                     <i class="fa-solid fa-gavel"></i> Generate Legal Erasure Notice
@@ -200,15 +217,17 @@ async function runScan() {
     if (combinedPayload.trim().length < 50) return alert('Please enter data into at least one field to scan.');
 
     try {
-        // PRODUCTION FIX: Relative URL routing
         const response = await fetch('/api/v1/scan', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: 'USER_123', rawPayload: combinedPayload })
         });
         const data = await response.json();
+        
         if (data.status === 'success') {
             displayScanResults(data.scam_index);
+            // VERSION 2.0 FIX: Pass the newly mapped array to our frontend renderer
+            displayBreachResults(data.breaches); 
         }
     } catch (err) {
         alert('Could not connect to backend server. Ensure server is running.');
@@ -251,6 +270,72 @@ function displayScanResults(indexData) {
     }
 }
 
+// =========================================================================
+// VERSION 2.0: BREACH MAPPER & AUTOFILL LOGIC
+// =========================================================================
+function displayBreachResults(breaches) {
+    const container = document.getElementById('breach-sources-container');
+    const list = document.getElementById('breach-list');
+    const countSpan = document.getElementById('breach-count');
+
+    list.innerHTML = ''; // Clear old data
+
+    if (breaches && breaches.length > 0) {
+        countSpan.textContent = breaches.length;
+        container.classList.remove('hidden');
+
+        breaches.forEach(breach => {
+            const card = document.createElement('div');
+            card.className = "flex flex-col sm:flex-row sm:items-center justify-between bg-slate-900/90 border border-rose-900/30 rounded-lg p-3 gap-3";
+            
+            card.innerHTML = `
+                <div class="flex-1">
+                    <h4 class="text-sm font-bold text-slate-200">${breach.entity_name}</h4>
+                    <p class="text-[11px] text-slate-400 mt-1">
+                        Date: ${breach.breach_date} | Exposed: <span class="text-slate-300 font-medium">${breach.exposed_fields.join(', ')}</span>
+                    </p>
+                </div>
+                <button 
+                    type="button"
+                    onclick="autofillNotice('${breach.entity_name}', '${breach.dpo_email}')"
+                    class="w-full sm:w-auto px-3 py-1.5 text-xs font-semibold bg-rose-600/10 hover:bg-rose-600 hover:text-white border border-rose-600/50 text-rose-400 rounded-md transition-colors duration-200 whitespace-nowrap">
+                    Draft Notice &rarr;
+                </button>
+            `;
+            list.appendChild(card);
+        });
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
+function autofillNotice(entityName, dpoEmail) {
+    // 1. Target the inputs in the Legal Form
+    const companyInput = document.getElementById('companyName');
+    const dpoInput = document.getElementById('dpoEmail');
+    const legalSection = document.getElementById('legal-engine-section');
+
+    // 2. Inject Data
+    if (companyInput) companyInput.value = entityName;
+    if (dpoInput) dpoInput.value = dpoEmail;
+
+    // 3. Smooth Scroll to the form
+    if (legalSection) {
+        legalSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    
+    // 4. Visual Highlight Effect (Emerald Ring) to show the user it worked
+    if (companyInput) {
+        companyInput.classList.add('ring-2', 'ring-emerald-500', 'border-emerald-500');
+        setTimeout(() => companyInput.classList.remove('ring-2', 'ring-emerald-500', 'border-emerald-500'), 1500);
+    }
+    if (dpoInput) {
+        dpoInput.classList.add('ring-2', 'ring-emerald-500', 'border-emerald-500');
+        setTimeout(() => dpoInput.classList.remove('ring-2', 'ring-emerald-500', 'border-emerald-500'), 1500);
+    }
+}
+// =========================================================================
+
 async function generateNotice(e) {
     e.preventDefault();
     const piiInput = document.getElementById('piiTypes').value;
@@ -265,7 +350,6 @@ async function generateNotice(e) {
     };
     
     try {
-        // PRODUCTION FIX: Relative URL routing
         const response = await fetch('/api/v1/dpdp/generate-notice', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -381,9 +465,5 @@ function downloadPDF() {
     }, 50);
 </script>
 
-</body>
-</html>
-</body>
-</html>
 </body>
 </html>
