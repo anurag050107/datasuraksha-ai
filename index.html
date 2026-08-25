@@ -8,6 +8,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- jsPDF Library for Client-Side PDF Generation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Firebase SDKs Added Here -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
 </head>
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-4 md:p-8">
     
@@ -94,7 +99,10 @@
                     </div>
                     <div>
                         <label class="block text-xs text-slate-400 mb-1">Phone Number</label>
-                        <input type="text" id="inputPhone" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white focus:border-cyan-500 outline-none font-mono" placeholder="+91 9876543210">
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 text-xs text-slate-400 bg-slate-800 border border-r-0 border-slate-700 rounded-l-lg font-mono">+91</span>
+                            <input type="tel" id="inputPhone" class="w-full bg-slate-900 border border-slate-700 rounded-r-lg p-2 text-xs text-white focus:border-cyan-500 outline-none font-mono" placeholder="9876543210" maxlength="10">
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -103,7 +111,8 @@
                 </div>
             </div>
             
-            <button onclick="runScan()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-lg shadow-cyan-600/20"> 
+            <!-- Button changed here to trigger OTP Flow first -->
+            <button onclick="startOTPFlow()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-2 text-sm shadow-lg shadow-cyan-600/20"> 
                 <i class="fa-solid fa-magnifying-glass"></i> Compute Scam Vulnerability Index
             </button>
         </div>
@@ -204,7 +213,114 @@
     </section>
 </main>
 
+<!-- ======================================================================= -->
+<!-- OTP MODAL OVERLAY (ADDED HERE)                                          -->
+<!-- ======================================================================= -->
+<div id="otpModalOverlay" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center transition-opacity">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 w-full max-w-sm shadow-2xl relative">
+        <button onclick="document.getElementById('otpModalOverlay').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-lg"></i></button>
+        
+        <div class="text-cyan-400 text-center mb-3">
+            <i class="fa-solid fa-mobile-screen-button text-3xl"></i>
+        </div>
+        <h3 class="text-white font-bold mb-1 text-center">Verify Identity</h3>
+        <p class="text-xs text-slate-400 mb-6 text-center px-4">We sent a secure code to authorize the threat scan.</p>
+        
+        <div id="recaptcha-container"></div>
+        
+        <input type="text" id="modalOtpInput" class="w-full bg-slate-950 border border-emerald-500/50 rounded-lg p-3 text-xl text-center text-white focus:border-emerald-500 outline-none font-mono tracking-widest mb-4" placeholder="••••••" maxlength="6">
+        
+        <button id="modalVerifyBtn" onclick="verifyOTPAndScan()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg transition text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20">
+            <i class="fa-solid fa-shield-halved"></i> Verify & Start Scan
+        </button>
+    </div>
+</div>
+
 <script>
+// =========================================================================
+// NEW FIREBASE LOGIC BLOCK
+// =========================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyCd6lgOjCK8kLKxUbI1GEq4ZEZCKO8FQfA",
+  authDomain: "datasuraksha-auth.firebaseapp.com",
+  projectId: "datasuraksha-auth",
+  storageBucket: "datasuraksha-auth.firebasestorage.app",
+  messagingSenderId: "389352198958",
+  appId: "1:389352198958:web:23535f98f895c2241160bf",
+  measurementId: "G-QPPR2XRWH1"
+};
+
+if (!firebase.apps.length) { 
+    firebase.initializeApp(firebaseConfig); 
+}
+
+let confirmationResultTracker = null;
+
+window.onload = function() {
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { 
+        'size': 'invisible' 
+    });
+};
+
+async function startOTPFlow() {
+    // Grab the number from your custom Phone Number input box
+    let rawPhone = document.getElementById('inputPhone').value.trim();
+    
+    // Strip out spaces or country codes just in case they typed them
+    rawPhone = rawPhone.replace(/\D/g, '').slice(-10);
+
+    if (rawPhone.length !== 10) {
+        alert("Please enter a valid 10-digit Phone Number in the form before scanning.");
+        return;
+    }
+
+    // Show the modal
+    document.getElementById('otpModalOverlay').classList.remove('hidden');
+    const verifyBtn = document.getElementById('modalVerifyBtn');
+    verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Dispatching SMS...';
+    verifyBtn.disabled = true;
+
+    try {
+        // Send the SMS
+        const result = await firebase.auth().signInWithPhoneNumber("+91" + rawPhone, window.recaptchaVerifier);
+        window.confirmationResultTracker = result;
+        
+        verifyBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Verify & Start Scan';
+        verifyBtn.disabled = false;
+        document.getElementById('modalOtpInput').focus();
+    } catch (error) {
+        alert("SMS Failed: " + error.message);
+        document.getElementById('otpModalOverlay').classList.add('hidden');
+    }
+}
+
+async function verifyOTPAndScan() {
+    const code = document.getElementById('modalOtpInput').value.trim();
+    if (code.length !== 6) return alert("Enter the 6-digit code.");
+    
+    const verifyBtn = document.getElementById('modalVerifyBtn');
+    verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+    verifyBtn.disabled = true;
+
+    try {
+        await window.confirmationResultTracker.confirm(code);
+        
+        // SUCCESS! Hide the modal
+        document.getElementById('otpModalOverlay').classList.add('hidden');
+        
+        // Trigger your original scan function!
+        runScan(); 
+
+    } catch (error) {
+        alert("Invalid OTP code.");
+        verifyBtn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Verify & Start Scan';
+        verifyBtn.disabled = false;
+    }
+}
+
+// =========================================================================
+// YOUR ORIGINAL JAVASCRIPT BLOCK (Untouched)
+// =========================================================================
 async function runScan() {
     const combinedPayload = `
         Aadhaar: ${document.getElementById('inputAadhaar').value}
@@ -270,9 +386,6 @@ function displayScanResults(indexData) {
     }
 }
 
-// =========================================================================
-// VERSION 2.0: BREACH MAPPER & AUTOFILL LOGIC
-// =========================================================================
 function displayBreachResults(breaches) {
     const container = document.getElementById('breach-sources-container');
     const list = document.getElementById('breach-list');
@@ -310,21 +423,17 @@ function displayBreachResults(breaches) {
 }
 
 function autofillNotice(entityName, dpoEmail) {
-    // 1. Target the inputs in the Legal Form
     const companyInput = document.getElementById('companyName');
     const dpoInput = document.getElementById('dpoEmail');
     const legalSection = document.getElementById('legal-engine-section');
 
-    // 2. Inject Data
     if (companyInput) companyInput.value = entityName;
     if (dpoInput) dpoInput.value = dpoEmail;
 
-    // 3. Smooth Scroll to the form
     if (legalSection) {
         legalSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
-    // 4. Visual Highlight Effect (Emerald Ring) to show the user it worked
     if (companyInput) {
         companyInput.classList.add('ring-2', 'ring-emerald-500', 'border-emerald-500');
         setTimeout(() => companyInput.classList.remove('ring-2', 'ring-emerald-500', 'border-emerald-500'), 1500);
@@ -334,7 +443,6 @@ function autofillNotice(entityName, dpoEmail) {
         setTimeout(() => dpoInput.classList.remove('ring-2', 'ring-emerald-500', 'border-emerald-500'), 1500);
     }
 }
-// =========================================================================
 
 async function generateNotice(e) {
     e.preventDefault();
@@ -377,7 +485,7 @@ function seedSampleData() {
     document.getElementById('inputAadhaar').value = '[Aadhaar Redacted]';
     document.getElementById('inputPan').value = 'BCPRS8192K';
     document.getElementById('inputUpi').value = 'rajesh.sharma@upi';
-    document.getElementById('inputPhone').value = '+91 9876543210';
+    document.getElementById('inputPhone').value = '8777393307';
     document.getElementById('inputEmail').value = 'rajesh.sharma@example.com';
     
     document.getElementById('userName').value = 'Rajesh Sharma';
@@ -440,6 +548,7 @@ function downloadPDF() {
     doc.save('DPDP_Section_12_Erasure_Notice.pdf');
 }
 </script>
+
 <!-- Instant Multi-Language Widget -->
 <div id="google_translate_element" class="absolute top-4 right-4 z-50 border border-slate-600 rounded shadow-sm bg-slate-800 overflow-hidden"></div>
 <!-- The Scripts -->

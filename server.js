@@ -164,7 +164,37 @@ app.post('/api/v1/dpdp/generate-notice', (req, res) => {
         notice_document: noticeText
     });
 });
+// =======================================================
+// VERSION 2.0: DIGILOCKER MOCK OAUTH 2.0 PROVIDER
+// =======================================================
 
+// 1. The Redirect Endpoint (Simulates sending user to Gov portal)
+app.get('/api/v1/auth/digilocker', (req, res) => {
+    console.log("[OAuth] Redirecting to DigiLocker Auth Portal...");
+    const redirectUri = req.query.redirect_uri || 'http://localhost:3000';
+    res.redirect(`${redirectUri}?code=DGILOCKER_MOCK_AUTH_CODE_2026`);
+});
+
+// 2. The Token Exchange Endpoint (Simulates fetching the verified ID data)
+app.post('/api/v1/auth/verify-token', (req, res) => {
+    const { code } = req.body;
+    
+    if (code === 'DGILOCKER_MOCK_AUTH_CODE_2026') {
+        console.log("[OAuth] Valid Token Received. Fetching Verified Profile...");
+        return res.json({
+            status: 'success',
+            verified_user: {
+                name: "Anurag", 
+                email: "anurag.btech@example.com",
+                phone: "+91 9876543210",
+                verified_id_hash: "XXXX-XXXX-8912",
+                kyc_status: "VERIFIED"
+            }
+        });
+    }
+    
+    res.status(401).json({ status: 'error', message: 'Invalid or expired Auth Code' });
+});
 // PRODUCTION FIX: Let Render dynamically assign the port, otherwise fallback to 3000
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
